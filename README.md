@@ -27,7 +27,7 @@ This project is a simple CRUD (Create, Read, Update, Delete) application built u
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/Amro145/Regestier.git
+git clone https://github.com/Amro145/CRUD-Project
 cd CRUD-Using-MERN-1
 ```
 
