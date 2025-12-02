@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@chakra-ui/react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import api from "../../api";
 
 function UpdatePage() {
   const [update, setUpdate] = useState({
@@ -15,9 +15,8 @@ function UpdatePage() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/products/${id}`);
-        const data = await response.json();
-        setUpdate(data.data);
+        const response = await api.get(`/products/${id}`);
+        setUpdate(response.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -37,31 +36,24 @@ function UpdatePage() {
       toast.error("Price must be greater than zero");
       return false;
     }
-    if (!update.image.startsWith("http")) {
-      toast.error("Image URL must start with http or https");
-      return false;
-    }
+
     return true;
   };
 
-  const handleUpdate2 = async () => {
+  const handleUpdate = async () => {
     if (!valid()) {
       return;
     }
     try {
-      await axios({
-        method: "put",
-        url: `http://localhost:3001/products/${id}`,
-        data: {
-          title: update.title,
-          price: update.price,
-          image: update.image,
-        },
-      });
-      toast.success("Successfully update!");
+      const Update = new FormData();
+      Update.append("title", update.title);
+      Update.append("price", update.price);
+      Update.append("image", update.image);
+      await api.put(`/products/${id}`, Update);
+      toast.success("Successfully updated!");
     } catch (err) {
       console.log(err);
-      toast.error("Please Out fill.");
+      toast.error("Failed to update.");
     }
   };
   //   handleUpdate2();
@@ -92,14 +84,15 @@ function UpdatePage() {
           </div>
           <div className="mb-10 w-96">
             <Input
-              type="text"
+              type="file"
               id="image"
-              placeholder="Enter update Src"
-              value={update.image}
-              onChange={(e) => setUpdate({ ...update, image: e.target.value })}
+              placeholder="Enter Product Src"
+              onChange={(e) =>
+                setUpdate({ ...update, image: e.target.files[0] })
+              }
             />
           </div>
-          <Button onClick={handleUpdate2}>Update</Button>
+          <Button onClick={handleUpdate}>Update</Button>
         </form>
       </div>
     </Box>

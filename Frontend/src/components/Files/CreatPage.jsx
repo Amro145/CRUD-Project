@@ -1,8 +1,8 @@
 import { Box, Input } from "@chakra-ui/react";
 import { useState } from "react";
 import { Button } from "@chakra-ui/react";
-import Axios from "axios";
 import toast from "react-hot-toast";
+import api from "../../api";
 
 function CreatePage() {
   const [product, setProduct] = useState({
@@ -23,13 +23,6 @@ function CreatePage() {
       toast.error("Price must be greater than zero");
       return false;
     }
-    if (
-      !product.image.startsWith("http") ||
-      !product.image.startsWith("https")
-    ) {
-      toast.error("Image URL must start with http or https");
-      return false;
-    }
     return true;
   };
   const handleAddProduct = async () => {
@@ -37,17 +30,17 @@ function CreatePage() {
       return;
     }
     try {
-      await Axios.post("http://localhost:3001/products/createProduct", {
-        title: product.title,
-        price: product.price,
-        image: product.image,
-      });
+      const formData = new FormData();
+      formData.append("title", product.title);
+      formData.append("price", product.price);
+      formData.append("image", product.image);
+      await api.post("/products/createProduct", formData);
 
-      toast.success("Successfully Add!");
+      toast.success("Successfully Added!");
       setProduct({ title: "", price: "", image: "" });
     } catch (error) {
-      console.error("Please Out fill:", error);
-      toast.error("Please Out fill.");
+      console.error("Error adding product:", error);
+      toast.error("Failed to add product.");
     }
   };
 
@@ -82,12 +75,11 @@ function CreatePage() {
           </div>
           <div className="mb-10 w-96 bg-black ">
             <Input
-              type="text"
+              type="file"
               id="image"
               placeholder="Enter Product Src"
-              value={product.image}
               onChange={(e) =>
-                setProduct({ ...product, image: e.target.value })
+                setProduct({ ...product, image: e.target.files[0] })
               }
             />
           </div>

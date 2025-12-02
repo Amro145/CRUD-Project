@@ -1,75 +1,106 @@
 const Products = require("../Model/Products/Product");
+const cloudinary = require('cloudinary').v2;
 
 const createProduct = async (req, res) => {
   const product = req.body;
-  if (!product) {
-    res.status(400).send({ massage: "there error in product post" });
+  if (!product.title || !product.price) {
+    return res.status(400).send({ success: false, message: "Please provide all fields" });
   }
 
-  const newProduct = await new Products(product);
+  if (req.file) {
+    try {
+      const uploadResponse = await cloudinary.uploader.upload(req.file.path);
+      product.image = uploadResponse.secure_url;
+    } catch (error) {
+      console.error("Cloudinary upload error:", error);
+      return res.status(500).json({ success: false, message: "Image upload failed" });
+    }
+  }
 
   try {
+    const newProduct = new Products(product);
     await newProduct.save();
-    res.status(201).send({ succes: true, massage: "Succes", newProduct });
+    res.status(201).send({ success: true, message: "Success", newProduct });
   } catch (error) {
-    res
-      .status(500)
-      .json({ succes: false, massage: "There error in save product in DB" });
+    console.error("Error creating product:", error);
+    res.status(500).json({ success: false, message: "Error saving product in DB" });
   }
 };
-
-
 
 const deleteProduct = async (req, res) => {
   const { id } = req.params;
   try {
     await Products.findByIdAndDelete(id);
-    res.status(200).send({ succes: true, massage: "Item Deleted" });
+    res.status(200).send({ success: true, message: "Item Deleted" });
   } catch (error) {
-    res
-      .status(404)
-      .json({ succes: false, massage: "there error in delete item" });
+    console.error("Error deleting product:", error);
+    res.status(500).json({ success: false, message: "Error deleting item" });
   }
 };
+
 const getAllProducts = async (req, res) => {
-  const products = await Products.find({});
   try {
-    res.status(200).json({ succes: true, data: products });
+    const products = await Products.find({});
+    res.status(200).json({ success: true, data: products });
   } catch (error) {
-    res
-      .status(404)
-      .json({ succes: false, massage: "There Error in Get All Products" });
+    console.error("Error getting products:", error);
+    res.status(500).json({ success: false, message: "Error getting all products" });
   }
 };
+
 const getSingleProduct = async (req, res) => {
-  const {id} = req.params
-  const products = await Products.findById(id);
+  const { id } = req.params;
   try {
-    res.status(200).json({ succes: true, data: products });
-  } catch (error) {
-    res
-      .status(404)
-      .json({ succes: false, massage: "There Error in Get All Products" });
-  }
-};
-const updateProduct = async (req, res) => {
-  const product = await Products.findByIdAndUpdate(
-    req.params.id,
-    {
-      $set: {
-        title: req.body.title,
-        price: req.body.price,
-        image: req.body.image,
-      },
-    },
-    {
-      new: true,
+    const product = await Products.findById(id);
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
     }
-  );
-  if (product) {
-    res.status(200).json({ succes: true, massage: "updated", data: product });
-  } else {
-    res.status(404).json({ succes: بشمسث, massage: "Not Found" });
+    res.status(200).json({ success: true, data: product });
+  } catch (error) {
+    console.error("Error getting single product:", error);
+    res.status(500).json({ success: false, message: "Error getting product" });
   }
 };
+
+const updateProduct = async (req, res) => {
+  const { id } = req.params;
+  const updates = {
+    title: req.body.title,
+    price: req.body.price,
+  };
+
+  if (req.file) {
+    try {
+      const uploadResponse = await cloudinary.uploader.upload(req.file.path);
+      updates.image = uploadResponse.secure_url;
+    } catch (error) {
+      console.error("Cloudinary upload error:", error);
+      return res.status(500).json({ success: false, message: "Image upload failed" });
+    }
+  } else if (req.body.image) {
+    // If image is a string (URL) and not a file, keep it
+    updates.image = req.body.image;
+  }
+
+  try {
+    const product = await Products.findByIdAndUpdate(
+      id,
+      {
+        $set: updates,
+      },
+      {
+        new: true,
+      }
+    );
+    if (product) {
+      res.status(200).json({ success: true, message: "Updated", data: product });
+    } else {
+      res.status(404).json({ success: false, message: "Not Found" });
+    }
+  } catch (error) {
+    console.error("Error updating product:", error);
+    res.status(500).json({ success: false, message: "Error updating product" });
+  }
+};
+
 module.exports = { createProduct, deleteProduct, getAllProducts, updateProduct, getSingleProduct };

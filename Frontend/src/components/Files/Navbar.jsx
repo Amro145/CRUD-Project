@@ -9,7 +9,7 @@ function Navbar() {
   return (
     <>
       <Box
-        className="nav flex justify-between items-center w-ful "
+        className="nav flex justify-between items-center w-full "
         bg={navbg}
         color={navcolor}
         paddingY={2}
@@ -43,7 +43,7 @@ function Navbar() {
           </Link>
           <div className="logo text-center">
             <Link to="/">
-              <h1>SHOOPING</h1>
+              <h1>SHOPPING</h1>
             </Link>
           </div>
         </div>

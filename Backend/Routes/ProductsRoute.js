@@ -9,6 +9,8 @@ const {
   getSingleProduct,
 } = require("../Controller/ProductController");
 
+const upload = require("../middleware/upload");
+
 /**
  * @desc "create Product "
  * @route /products/createProduct
@@ -16,7 +18,7 @@ const {
  * @access public
  */
 
-Route.post("/createProduct", createProduct);
+Route.post("/createProduct", upload.single("image"), createProduct);
 /**
  * @desc "get single Product "
  * @route /:id
@@ -50,6 +52,6 @@ Route.get("/", getAllProducts);
  * @access public
  */
 
-Route.put("/:id", updateProduct);
+Route.put("/:id", upload.single("image"), updateProduct);
 
 module.exports = Route;

@@ -7,6 +7,12 @@ dotenv.config();
 app.use(express.json());
 
 var cors = require('cors')
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 app.use(cors({
   origin: '*',
@@ -15,14 +21,9 @@ app.use(cors({
   credentials: true
 }))
 // ========Conntect To db======= //
-const connectToDb = async () => {
-  try {
-    await mongoose.connect(process.env.URL_DB);
-    console.log("Connected To DB");
-  } catch {
-    console.log("Falied To Connected");
-  }
-};
+const connectToDb = require("./config/db");
+
+// ========Connect To db======= //
 connectToDb();
 
 // ===============server==========//
