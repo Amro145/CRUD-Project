@@ -83,6 +83,16 @@ function CreatePage() {
               }
             />
           </div>
+          {
+            product.image && (
+              <div className="mb-10 w-96 p-5  max-h-52  relative  my-5 bg-black ">
+                <div className="flex justify-center items-center">
+                  <img src={URL.createObjectURL(product.image)} className="max-h-52 max-w-52 cover" alt="Product" />
+                  <button onClick={() => setProduct({ ...product, image: null })} className="absolute top-2 left-2 cursor-pointer bg-red-500 text-white p-2">X</button>
+                </div>
+              </div>
+            )
+          }
           <Button onClick={handleAddProduct}>Add Product</Button>
         </form>
       </div>

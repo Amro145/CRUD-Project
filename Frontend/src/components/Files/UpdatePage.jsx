@@ -11,12 +11,14 @@ function UpdatePage() {
     price: "",
     image: "",
   });
+  const [oldImage, setOldImage] = useState(null);
   const { id } = useParams();
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await api.get(`/products/${id}`);
         setUpdate(response.data.data);
+        setOldImage(response.data.data.image);
       } catch (error) {
         console.log(error);
       }
@@ -86,12 +88,30 @@ function UpdatePage() {
             <Input
               type="file"
               id="image"
-              placeholder="Enter Product Src"
-              onChange={(e) =>
+              onChange={(e) => {
                 setUpdate({ ...update, image: e.target.files[0] })
+                setOldImage(null)
+              }
               }
             />
           </div>
+          {
+            oldImage ? (
+              <div className="mb-10 w-96 p-5  max-h-52  relative  my-5 bg-black ">
+                <div className="flex justify-center items-center">
+                  <img src={oldImage} className="max-h-52 max-w-52 cover" alt="Product" />
+                </div>
+              </div>
+            ) :
+              update.image && oldImage === null && (
+                <div className="mb-10 w-96 p-5  max-h-52  relative  my-5 bg-black ">
+                  <div className="flex justify-center items-center">
+                    <img src={URL.createObjectURL(update.image)} className="max-h-52 max-w-52 cover" alt="Product" />
+                    <button onClick={() => setUpdate({ ...update, image: null })} className="absolute top-2 left-2 cursor-pointer bg-red-500 text-white p-2">X</button>
+                  </div>
+                </div>
+              )
+          }
           <Button onClick={handleUpdate}>Update</Button>
         </form>
       </div>
