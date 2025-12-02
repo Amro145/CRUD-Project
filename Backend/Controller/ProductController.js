@@ -33,7 +33,6 @@ const deleteProduct = async (req, res) => {
     await Products.findByIdAndDelete(id);
     res.status(200).send({ success: true, message: "Item Deleted" });
   } catch (error) {
-    console.error("Error deleting product:", error);
     res.status(500).json({ success: false, message: "Error deleting item" });
   }
 };
@@ -43,7 +42,7 @@ const getAllProducts = async (req, res) => {
     const products = await Products.find({});
     res.status(200).json({ success: true, data: products });
   } catch (error) {
-    console.error("Error getting products:", error);
+    // console.error("Error getting products:", error);
     res.status(500).json({ success: false, message: "Error getting all products" });
   }
 };
@@ -57,7 +56,7 @@ const getSingleProduct = async (req, res) => {
     }
     res.status(200).json({ success: true, data: product });
   } catch (error) {
-    console.error("Error getting single product:", error);
+    // console.error("Error getting single product:", error);
     res.status(500).json({ success: false, message: "Error getting product" });
   }
 };
@@ -98,7 +97,7 @@ const updateProduct = async (req, res) => {
       res.status(404).json({ success: false, message: "Not Found" });
     }
   } catch (error) {
-    console.error("Error updating product:", error);
+    // console.error("Error updating product:", error);
     res.status(500).json({ success: false, message: "Error updating product" });
   }
 };

@@ -61,7 +61,6 @@ function Product() {
             })
             .catch((err) => {
               swal.fire("Error!", "Failed to delete.", "error");
-              console.log(err);
             });
         }
       });

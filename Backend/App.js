@@ -2,11 +2,16 @@ const mongoose = require("mongoose");
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
+const helmet = require("helmet");
 dotenv.config();
+
+// ========== Security Middleware =========//
+app.use(helmet());
+
 // ==========Allow Json =========//
 app.use(express.json());
 
-var cors = require('cors')
+const cors = require('cors');
 const cloudinary = require('cloudinary').v2;
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -15,11 +20,12 @@ cloudinary.config({
 });
 
 app.use(cors({
-  origin: '*',
+  origin: process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL : '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
-}))
+}));
+
 // ========Conntect To db======= //
 const connectToDb = require("./config/db");
 
@@ -27,8 +33,11 @@ const connectToDb = require("./config/db");
 connectToDb();
 
 // ===============server==========//
-app.listen(process.env.PORT, () => {
-  console.log("Running");
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`Server running on port ${PORT}`);
+  }
 });
 
 
