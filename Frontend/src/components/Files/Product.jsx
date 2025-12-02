@@ -24,7 +24,7 @@ function Product() {
 
   if (productItem.length === 0) {
     return (
-      <Box className="flex justify-center w-dvw">
+      <Box className="flex justify-center w-dvw max-h-dvh">
         <div className="flex flex-col items-center">
           <h1>
             There Is No Element
@@ -71,13 +71,14 @@ function Product() {
     <>
       {productItem.map((product) => {
         return (
-          <Card.Root maxW="sm" overflow="hidden" key={product._id}>
+          <Card.Root maxW="sm" overflow="hidden" key={product._id} className="flex justify-center w-dvw max-h-100">
             <Image
               src={
                 product.image ||
                 "https://www.google.com/imgres?q=unknown%20product&imgurl=https%3A%2F%2Fwww.shutterstock.com%2Fimage-vector%2Fclosed-mysterious-black-box-isometric-260nw-2478513845.jpg&imgrefurl=https%3A%2F%2Fwww.shutterstock.com%2Fsearch%2Funknown-product&docid=pkOsSOWE8d4fUM&tbnid=QGpQNi2fwOD8IM&vet=12ahUKEwiI-JiU66qLAxWiavEDHWWLIy0QM3oECGcQAA..i&w=260&h=280&hcb=2&ved=2ahUKEwiI-JiU66qLAxWiavEDHWWLIy0QM3oECGcQAA"
               }
               alt={product.title}
+              className="w-dvw max-h-60 object-contain"
             />
             <Card.Body gap="2">
               <Card.Title>{product.title}</Card.Title>

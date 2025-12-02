@@ -4,8 +4,10 @@ import { Button } from "@chakra-ui/react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import api from "../../api";
+import { useNavigate } from "react-router-dom";
 
 function UpdatePage() {
+  const navigate = useNavigate();
   const [update, setUpdate] = useState({
     title: "",
     price: "",
@@ -53,6 +55,7 @@ function UpdatePage() {
       Update.append("image", update.image);
       await api.put(`/products/${id}`, Update);
       toast.success("Successfully updated!");
+      navigate("/");
     } catch (err) {
       console.log(err);
       toast.error("Failed to update.");
