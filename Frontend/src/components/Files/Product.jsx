@@ -26,7 +26,7 @@ function Product() {
     fetchProduct();
   }, []);
 
-  if (productItem.length === 0) {
+  if (productItem.length === 0 && !loading) {
     return (
       <Box className="flex justify-center w-dvw max-h-dvh">
         <div className="flex flex-col items-center">
