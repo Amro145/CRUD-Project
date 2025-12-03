@@ -44,3 +44,6 @@ app.listen(PORT, () => {
 //================route=========//
 
 app.use("/products", require("./Routes/ProductsRoute"));
+
+// Export the app for Vercel
+module.exports = app;
